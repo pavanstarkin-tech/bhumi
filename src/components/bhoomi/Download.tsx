@@ -1,7 +1,7 @@
 import { Download, X, Smartphone } from "lucide-react";
 import { useEffect } from "react";
 
-const APK_URL = "https://shiusgug.s3.ap-south-1.amazonaws.com/app-release.apk";
+const APK_URL = "https://github.com/pavanstarkin-tech/bhumi/releases/download/v1.0.0/app-release.apk";
 const QR_URL = `https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=${encodeURIComponent(APK_URL)}`;
 
 export function DownloadSection({ onOpen }: { onOpen: () => void }) {
