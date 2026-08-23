@@ -1,30 +1,12 @@
 import { useState, useEffect, useRef } from "react";
-import { Sprout, Store, LayoutDashboard } from "lucide-react";
 
-const TABS = [
-  {
-    id: "farmer",
-    label: "Farmer",
-    icon: Sprout,
-    url: "https://pavanstarkin-tech.github.io/bhumi-app/",
-    type: "phone",
-    videoUrl: "https://pavanstarkin-tech.github.io/bhumi-app/assets/assets/splash.mp4",
-  },
-  {
-    id: "admin",
-    label: "Admin",
-    icon: LayoutDashboard,
-    url: "https://pavanstarkin-tech.github.io/bhumi-app/#/admin",
-    type: "desktop",
-  },
-  {
-    id: "shopkeeper",
-    label: "Shopkeeper",
-    icon: Store,
-    url: "https://pavanstarkin-tech.github.io/bhumi-app/#/shop",
-    type: "desktop",
-  },
-];
+const FARMER_APP = {
+  id: "farmer",
+  label: "Farmer App",
+  url: "https://pavanstarkin-tech.github.io/bhumi-app/",
+  type: "phone",
+  videoUrl: "https://pavanstarkin-tech.github.io/bhumi-app/assets/assets/splash.mp4",
+};
 
 function LoadingOverlay({ label }: { label: string }) {
   return (
@@ -54,7 +36,7 @@ function LoadingOverlay({ label }: { label: string }) {
         }}
       />
       <p style={{ fontSize: 14, color: "#64748b", fontWeight: 500 }}>
-        Loading {label} panel…
+        Loading {label}…
       </p>
       <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
     </div>
@@ -164,7 +146,7 @@ function PhoneFrame({
               </button>
             </div>
           )}
-          {(!loaded || !loadIframe) && <LoadingOverlay label={title.replace(" Panel", "")} />}
+          {(!loaded || !loadIframe) && <LoadingOverlay label={title} />}
           {loadIframe && (
             <iframe
               src={url}
@@ -190,71 +172,7 @@ function PhoneFrame({
   );
 }
 
-function DesktopFrame({ url, title, loadIframe }: { url: string; title: string; loadIframe: boolean }) {
-  const [loaded, setLoaded] = useState(false);
-
-  useEffect(() => {
-    if (!loadIframe) {
-      setLoaded(false);
-      return;
-    }
-    const timer = setTimeout(() => setLoaded(true), 3000);
-    return () => clearTimeout(timer);
-  }, [url, loadIframe]);
-
-  return (
-    <div className="w-full max-w-[900px] mx-auto rounded-2xl border border-black/10 bg-neutral-900 p-2 shadow-[0_30px_70px_rgba(0,0,0,0.18)]">
-      {/* macOS-style title bar */}
-      <div className="flex items-center justify-between px-3 py-2">
-        <div className="flex items-center gap-1.5">
-          <span className="h-2.5 w-2.5 rounded-full bg-[#ff5f57]" />
-          <span className="h-2.5 w-2.5 rounded-full bg-[#febc2e]" />
-          <span className="h-2.5 w-2.5 rounded-full bg-[#28c840]" />
-          {(!loaded || !loadIframe) && (
-            <span style={{ marginLeft: 8, fontSize: 11, color: "#6b7280" }}>
-              Loading…
-            </span>
-          )}
-        </div>
-        {title.toLowerCase().includes("admin") && (
-          <span className="text-[11px] font-semibold text-neutral-300 bg-neutral-800 px-2.5 py-0.5 rounded border border-neutral-700">
-            Passcode: 9282
-          </span>
-        )}
-      </div>
-
-      {/* Screen */}
-      <div
-        className="rounded-xl overflow-hidden bg-white relative"
-        style={{ aspectRatio: "16/9", overscrollBehavior: "contain" }}
-      >
-        {(!loaded || !loadIframe) && <LoadingOverlay label={title.replace(" Panel", "")} />}
-        {loadIframe && (
-          <iframe
-            src={url}
-            title={title}
-            sandbox="allow-same-origin allow-scripts allow-forms allow-popups"
-            loading="lazy"
-            className="border-0"
-            onLoad={() => setLoaded(true)}
-            style={{
-              width: "133.3%",
-              height: "133.3%",
-              transform: "scale(0.75)",
-              transformOrigin: "top left",
-              opacity: loaded ? 1 : 0,
-              transition: "opacity 0.4s ease",
-              overscrollBehavior: "contain",
-            }}
-          />
-        )}
-      </div>
-    </div>
-  );
-}
-
 export function LivePreview() {
-  const [activeTab, setActiveTab] = useState("farmer");
   const [isInView, setIsInView] = useState(false);
   const containerRef = useRef<HTMLElement>(null);
 
@@ -276,8 +194,6 @@ export function LivePreview() {
     return () => observer.disconnect();
   }, []);
 
-  const current = TABS.find((t) => t.id === activeTab)!;
-
   return (
     <section id="preview" ref={containerRef} className="py-24 bg-background">
       <div className="mx-auto max-w-7xl px-6">
@@ -288,60 +204,25 @@ export function LivePreview() {
             Live Preview
           </p>
           <h2 className="mt-3 text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight">
-            Experience the Web Panels
+            Experience Bhoomi Live
           </h2>
           <p className="mt-4 text-foreground/70">
-            Explore Bhoomi's Farmer, Admin, and Shopkeeper interfaces live.
-            {activeTab === "admin" && (
-              <span className="block mt-2 text-brand font-semibold animate-pulse">
-                Admin Passcode: 9282
-              </span>
-            )}
+            Interact with the live Bhoomi mobile application right in your browser.
           </p>
         </div>
 
-        {/* Tab switcher */}
-        <div className="mt-12 flex justify-center" data-reveal>
-          <div className="inline-flex items-center gap-1 rounded-2xl bg-muted p-1.5 shadow-inner">
-            {TABS.map(({ id, label, icon: Icon }) => {
-              const isActive = activeTab === id;
-              return (
-                <button
-                  key={id}
-                  onClick={() => setActiveTab(id)}
-                  className="flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold transition-all duration-300"
-                  style={{
-                    background: isActive ? "#16a34a" : "transparent",
-                    color: isActive ? "#fff" : "#64748b",
-                    boxShadow: isActive
-                      ? "0 4px 14px rgba(22,163,74,0.35)"
-                      : "none",
-                    transform: isActive ? "scale(1.03)" : "scale(1)",
-                  }}
-                >
-                  <Icon size={16} />
-                  {label}
-                </button>
-              );
-            })}
-          </div>
-        </div>
-
-        {/* Panel */}
-        <div className="mt-10" data-reveal>
-          {current.type === "phone" ? (
-            <PhoneFrame
-              url={current.url}
-              title={`${current.label} Panel`}
-              loadIframe={isInView}
-              videoUrl={current.videoUrl}
-            />
-          ) : (
-            <DesktopFrame url={current.url} title={`${current.label} Panel`} loadIframe={isInView} />
-          )}
+        {/* Mobile Phone Mockup */}
+        <div className="mt-12" data-reveal>
+          <PhoneFrame
+            url={FARMER_APP.url}
+            title={FARMER_APP.label}
+            loadIframe={isInView}
+            videoUrl={FARMER_APP.videoUrl}
+          />
         </div>
 
       </div>
     </section>
   );
 }
+
